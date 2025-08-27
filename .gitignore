@@ -1,0 +1,10 @@
+# Ignora o arquivo de variáveis de ambiente
+.env
+
+# Ignora certificados ou chaves privadas
+*.pem
+*.key
+
+# Ignora cache do Python
+__pycache__/
+*.pyc
