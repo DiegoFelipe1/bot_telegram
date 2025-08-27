@@ -4,7 +4,6 @@ import datetime
 import requests
 import base64
 import json
-from obter_token import token_access
 import base64
 from io import BytesIO
 from aiogram import Bot, Dispatcher, types
