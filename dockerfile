@@ -1,5 +1,5 @@
 # Use a imagem oficial do Python 3.13 slim (mais leve)
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 # Variáveis de ambiente para não criar buffers e deixar logs no stdout
 ENV PYTHONUNBUFFERED=1
