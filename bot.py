@@ -24,14 +24,14 @@ GROUP_INVITE_LINK = os.getenv("GROUP_INVITE_LINK")
 GN_CLIENT_ID = os.getenv("GN_CLIENT_ID")
 GN_CLIENT_SECRET = os.getenv("GN_CLIENT_SECRET")
 PIX_CHAVE = os.getenv("PIX_CHAVE")
-CERTIFICADO = os.getenv("CERTIFICADO")
+#CERTIFICADO = os.getenv("CERTIFICADO")
 GN_SANDBOX = os.getenv("GN_SANDBOX")
 
-CERTIFICADO = "/etc/secrets/certificadoPROD3.pem"
+CERTIFICADO = r"C:\Users\fdieg\Desktop\BOT PARA VENDAs\certificadoHOM.pem"
 credentials = {
     'client_id': GN_CLIENT_ID,
     'client_secret': GN_CLIENT_SECRET,
-    'sandbox': False,
+    'sandbox': True,
     'certificate': CERTIFICADO
 }
 
@@ -43,9 +43,9 @@ dp = Dispatcher()
 ADMINS = [123456789]  # Coloque seu ID admin aqui!
 
 PLANOS = {
-    "7dias": {"dias": 7, "preco": 10.00},
-    "30dias": {"dias": 30, "preco": 50.00},
-    "3meses": {"dias": 90, "preco": 120.00},
+    "7dias": {"dias": 7, "preco": 15.00},
+    "30dias": {"dias": 30, "preco": 25.00},
+    "3meses": {"dias": 90, "preco": 65.00},
 }
 
 # ======= MENUS =======
@@ -80,7 +80,6 @@ def criar_cobranca(valor):
         }
 
         cobranca = efi.pix_create_immediate_charge(body=payload)
-        print("Resposta da cobrança:", cobranca)
         return cobranca
 
     except Exception as e:
@@ -89,7 +88,7 @@ def criar_cobranca(valor):
 
 def gerar_qrcode(loc_id):
         qrcode = efi.pix_generate_qrcode(params={"id": loc_id})
-        print("QR Code gerado:", json.dumps(qrcode, indent=2))
+        #print("QR Code gerado:", json.dumps(qrcode, indent=2))
         return qrcode
 
 def base64_para_inputfile(imagem_base64, nome_arquivo="qrcode.png"):
@@ -136,7 +135,7 @@ async def verificar_pagamento(txid, user_id, dias, bot):
         except Exception as e:
             print(f"Erro ao verificar pagamento: {e}")
 
-        await asyncio.sleep(30)  # Verifica a cada 30 segundos
+        await asyncio.sleep(10)  # Verifica a cada 30 segundos
 
 # ======= /start =======
 @dp.message(Command("start"))
@@ -166,9 +165,9 @@ async def callbacks(call: types.CallbackQuery):
     if data == "menu_assinar":
         markup = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="💸 7 dias - R$10", callback_data="plano_7dias")],
-                [InlineKeyboardButton(text="💸 30 dias - R$50", callback_data="plano_30dias")],
-                [InlineKeyboardButton(text="💸 3 meses - R$120", callback_data="plano_3meses")],
+                [InlineKeyboardButton(text="💸 7 dias - R$15", callback_data="plano_7dias")],
+                [InlineKeyboardButton(text="💸 30 dias - R$25", callback_data="plano_30dias")],
+                [InlineKeyboardButton(text="💸 3 meses - R$65", callback_data="plano_3meses")],
                 [InlineKeyboardButton(text="🔙 Voltar", callback_data="menu_main")]
             ]
         )
