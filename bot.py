@@ -110,8 +110,6 @@ async def verificar_pagamento(txid, user_id, dias, bot):
             response =  efi.pix_detail_charge(params=params)
             status = response.get("status")
 
-            status = "CONCLUIDA"
-
             if status == "CONCLUIDA":
                 # Atualiza o banco de dados
                 session = next(get_session())
