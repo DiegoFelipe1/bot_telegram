@@ -27,7 +27,7 @@ PIX_CHAVE = os.getenv("PIX_CHAVE")
 CERTIFICADO = os.getenv("CERTIFICADO")
 GN_SANDBOX = os.getenv("GN_SANDBOX")
 
-CERTIFICADO = r"C:\Users\fdieg\Desktop\BOT PARA VENDAs\certificadoPROD3.pem"
+CERTIFICADO = "/etc/secrets/certificadoPROD3.pem"
 credentials = {
     'client_id': GN_CLIENT_ID,
     'client_secret': GN_CLIENT_SECRET,
