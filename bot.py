@@ -102,7 +102,11 @@ def base64_para_inputfile(imagem_base64, nome_arquivo="qrcode.png"):
     return InputFile(file=buffer, filename=nome_arquivo)
 
 async def verificar_pagamento(txid, user_id, dias, bot):
-    while True:
+    tempo_limite = 3600  # 1 hora em segundos
+    intervalo = 30       # Verifica a cada 30 segundos
+    tempo_passado = 0
+
+    while tempo_passado < tempo_limite:
         try:
             params = {
                 'txid': txid
@@ -137,8 +141,15 @@ async def verificar_pagamento(txid, user_id, dias, bot):
         except Exception as e:
             print(f"Erro ao verificar pagamento: {e}")
 
-        await asyncio.sleep(10)  # Verifica a cada 30 segundos
-
+        # Aguarda próximo ciclo de verificação
+        await asyncio.sleep(intervalo)
+        tempo_passado += intervalo
+        
+    if tempo_passado >= tempo_limite:
+        await bot.send_message(
+            user_id,
+            "⚠️ O tempo para pagamento expirou (1 hora). Por favor, gere um novo Pix para continuar."
+        )
 # ======= /start =======
 @dp.message(Command("start"))
 async def cmd_start(m: types.Message):
