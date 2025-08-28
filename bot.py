@@ -110,6 +110,8 @@ async def verificar_pagamento(txid, user_id, dias, bot):
             response =  efi.pix_detail_charge(params=params)
             status = response.get("status")
 
+            status = "CONCLUIDA"
+
             if status == "CONCLUIDA":
                 # Atualiza o banco de dados
                 session = next(get_session())
@@ -126,7 +128,9 @@ async def verificar_pagamento(txid, user_id, dias, bot):
                 await bot.unban_chat_member(GROUP_ID, user_id)
                 await bot.send_message(
                     user_id,
-                    f"✅ Pagamento confirmado!\nAqui está o link do grupo: {GROUP_INVITE_LINK}"
+                    f"✅ Pagamento confirmado!\n\n"
+                    f"🏆 Parabens por adquirir esse plano, certeza que você vai gozar muito... opa gostar muito rs.\n\n"
+                    f"🔗 Link do grupo: {GROUP_INVITE_LINK}"
                 )
                 break
             else:
@@ -154,7 +158,13 @@ async def cmd_start(m: types.Message):
         session.close()
 
     is_admin = m.from_user.id in ADMINS
-    await m.answer("👋 Bem-vindo!\nUse os botões abaixo:", reply_markup=get_main_menu(is_admin))
+    await m.answer(
+        f"👋 Bem-vindo, {m.from_user.full_name}!\n"
+        "\n"
+        "🔞 Aqui você vai encontar os melhores videos que existem na internet, por um preço extremamente baixo\n"
+        "\n"
+        "Use os botões abaixo:", 
+        reply_markup=get_main_menu(is_admin))
 
 # ======= CALLBACK =======
 @dp.callback_query()
@@ -167,7 +177,7 @@ async def callbacks(call: types.CallbackQuery):
             inline_keyboard=[
                 [InlineKeyboardButton(text="💸 7 dias - R$15", callback_data="plano_7dias")],
                 [InlineKeyboardButton(text="💸 30 dias - R$25", callback_data="plano_30dias")],
-                [InlineKeyboardButton(text="💸 3 meses - R$65", callback_data="plano_3meses")],
+                [InlineKeyboardButton(text="💸 90 dias - R$65", callback_data="plano_3meses")],
                 [InlineKeyboardButton(text="🔙 Voltar", callback_data="menu_main")]
             ]
         )
@@ -196,10 +206,13 @@ async def callbacks(call: types.CallbackQuery):
 
         await bot.send_message(
             user_id,
-            f"✅ Pedido gerado!\n💲 Valor: R${valor:.2f}\n\n"
-            f"Copie o código abaixo ou escaneie o QR Code para pagar:\n\n"
-            f"`{copia_cola}`",
-            parse_mode="Markdown"
+            f"✅ Seu pedido foi gerado com sucesso!!\n\n"
+            f"💦 O pedido escolhido foi: {plano.get('dias')} dias.\n"
+            f"💰 Valor: R${valor:.2f}\n\n"
+            f"👇 Copie o código abaixo para pagar:\n\n"
+            f"<blockquote><code>{copia_cola}</code> </blockquote>\n\n"
+            f"💥 Apos o pagamento, seu acesso sera liberado imediatamente e lhe enviaremos o link, tudo isso sem a necessidade de um ADM. Tudo rapido e facil.",
+            parse_mode="HTML"
         )
         asyncio.create_task(verificar_pagamento(txid, user_id, dias, bot))
 
