@@ -43,9 +43,9 @@ dp = Dispatcher()
 ADMINS = [7383346871]  # Coloque seu ID admin aqui!
 
 PLANOS = {
-    "7dias": {"dias": 7, "preco": 15.00},
-    "30dias": {"dias": 30, "preco": 25.00},
-    "3meses": {"dias": 90, "preco": 65.00},
+    "7dias": {"dias": 7, "preco": 9.99},
+    "30dias": {"dias": 30, "preco": 19.99},
+    "3meses": {"dias": 90, "preco": 49.99},
 }
 
 # ======= MENUS =======
@@ -184,9 +184,9 @@ async def callbacks(call: types.CallbackQuery):
     if data == "menu_assinar":
         markup = InlineKeyboardMarkup(
             inline_keyboard=[
-                [InlineKeyboardButton(text="💸 7 dias - R$15", callback_data="plano_7dias")],
-                [InlineKeyboardButton(text="💸 30 dias - R$25", callback_data="plano_30dias")],
-                [InlineKeyboardButton(text="💸 90 dias - R$65", callback_data="plano_3meses")],
+                [InlineKeyboardButton(text="💸 7 dias - R$9,99", callback_data="plano_7dias")],
+                [InlineKeyboardButton(text="💸 30 dias - R$19,99", callback_data="plano_30dias")],
+                [InlineKeyboardButton(text="💸 90 dias - R$49,99", callback_data="plano_3meses")],
                 [InlineKeyboardButton(text="🔙 Voltar", callback_data="menu_main")]
             ]
         )
