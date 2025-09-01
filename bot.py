@@ -40,7 +40,7 @@ efi = EfiPay(credentials)
 bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
-ADMINS = [123456789]  # Coloque seu ID admin aqui!
+ADMINS = [7383346871]  # Coloque seu ID admin aqui!
 
 PLANOS = {
     "7dias": {"dias": 7, "preco": 15.00},
