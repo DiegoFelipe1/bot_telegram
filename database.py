@@ -1,9 +1,13 @@
+import os
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime,BigInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
+from dotenv import load_dotenv
 
-DB_DSN = "postgresql://botuser:5JaZI1REfMd3y1WUrpDXLEeGfFi1ddNI@dpg-d2r15undiees73dnvnb0-a.oregon-postgres.render.com/botdb_oefx"
+load_dotenv()
+DB_DSN = os.getenv("DB_DSN")
+
 engine = create_engine(DB_DSN)
 SessionLocal = sessionmaker(bind=engine)
 
