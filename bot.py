@@ -6,12 +6,12 @@ import base64
 import json
 import base64
 from io import BytesIO
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputFile, ChatJoinRequest
 from dotenv import load_dotenv
 
-from database import get_session, UserAccess
+from database import get_session, UserAccess, Media
 from efipay import EfiPay
 
 
@@ -150,11 +150,34 @@ async def verificar_pagamento(txid, user_id, dias, bot):
             user_id,
             "⚠️ O tempo para pagamento expirou (1 hora). Por favor, gere um novo Pix para continuar."
         )
+'''
+@dp.message(F.content_type == "video")
+async def save_video_id(m: types.Message):
+    session = next(get_session())
+
+    file_id = m.video.file_id
+
+    # Você pode escolher um nome fixo para esse vídeo (ex: "boas_vindas")
+    media = Media(name="boas_vindas", file_id=file_id)
+
+    try:
+        session.add(media)
+        session.commit()
+        await m.answer(f"✅ File ID salvo com sucesso!\n\nID: {file_id}")
+    except Exception as e:
+        session.rollback()
+        await m.answer(f"⚠️ Erro ao salvar: {e}")
+    finally:
+        session.close()
+'''
+
 # ======= /start =======
 @dp.message(Command("start"))
 async def cmd_start(m: types.Message):
+    
     session = next(get_session())
     try:
+        video = session.query(Media).filter_by(name="boas_vindas").first()
         user = session.query(UserAccess).filter_by(telegram_id=m.from_user.id).first()
         if not user:
             user = UserAccess(
@@ -167,13 +190,28 @@ async def cmd_start(m: types.Message):
         session.close()
 
     is_admin = m.from_user.id in ADMINS
+
+    if video:
+        await m.answer_video(video=video.file_id, caption=(
+            f"👋 Bem-vindo, {m.from_user.full_name}!\n"
+            "\n"
+            "😈 Aqui você vai ter acesso aos mais diversos conteúdos +18 \n"
+            "\n"
+            "✅ Amadoras \n"
+            "✅ Casal\n"
+            "✅ Live\n"
+            "✅ Novinhas (todas maiores de 18)\n"
+            "✅ Privacy/Onlyfans\n"
+            "✅ Snapchat\n"
+            "✅ Vazados\n"
+            "✅ Camera escondida\n"
+            "\n"
+            "🤩 Contamos hoje com mais de mil midias com atualizações diárias. Vai perder essa oportunidade?"))
+            
     await m.answer(
-        f"👋 Bem-vindo, {m.from_user.full_name}!\n"
-        "\n"
-        "🔞 Aqui você vai encontar os melhores videos que existem na internet, por um preço extremamente baixo\n"
-        "\n"
-        "Use os botões abaixo:", 
-        reply_markup=get_main_menu(is_admin))
+        f"Use os botões abaixo para nevegar pelo menu 👇:",
+        reply_markup=get_main_menu(is_admin)
+    )
 
 # ======= CALLBACK =======
 @dp.callback_query()
@@ -190,7 +228,13 @@ async def callbacks(call: types.CallbackQuery):
                 [InlineKeyboardButton(text="🔙 Voltar", callback_data="menu_main")]
             ]
         )
-        await call.message.edit_text("📌 Escolha um dos planos abaixo:", reply_markup=markup)
+        await call.message.edit_text(
+            f"💥💥 Atenção 💥💥\n\n"
+            "Você esta quase lá, falta pouco pra ter acesso ao novo mundo\n\n"
+            "O pagamento de todos os planos são feitos por pix\n\n"
+            "Após a escolha do plano, será gerado um pix copia e cola pra você pagar no banco de sua preferencia!\n\n"
+            "Escolha um dos planos abaixo:",
+            reply_markup=markup)
 
     elif data.startswith("plano_"):
         plano_key = data.split("_")[1]
@@ -220,7 +264,8 @@ async def callbacks(call: types.CallbackQuery):
             f"💰 Valor: R${valor:.2f}\n\n"
             f"👇 Copie o código abaixo para pagar:\n\n"
             f"<blockquote><code>{copia_cola}</code> </blockquote>\n\n"
-            f"💥 Apos o pagamento, seu acesso sera liberado imediatamente e lhe enviaremos o link, tudo isso sem a necessidade de um ADM. Tudo rapido e facil.",
+            f"💥 Apos o pagamento, seu acesso sera liberado imediatamente e lhe enviaremos o link, tudo isso sem a necessidade de um ADM.\n\n"
+            f"Tudo rápido e fácil.",
             parse_mode="HTML"
         )
         asyncio.create_task(verificar_pagamento(txid, user_id, dias, bot))

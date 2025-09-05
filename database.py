@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
 
-DB_DSN = "postgresql://botuser:5JaZI1REfMd3y1WUrpDXLEeGfFi1ddNI@dpg-d2r15undiees73dnvnb0-a/botdb_oefx"
+DB_DSN = "postgresql://botuser:5JaZI1REfMd3y1WUrpDXLEeGfFi1ddNI@dpg-d2r15undiees73dnvnb0-a.oregon-postgres.render.com/botdb_oefx"
 engine = create_engine(DB_DSN)
 SessionLocal = sessionmaker(bind=engine)
 
@@ -19,7 +19,15 @@ class UserAccess(Base):
     is_paid_client = Column(Boolean, default=False)
     subscription_date = Column(DateTime, nullable=True)
     subscription_expiration = Column(DateTime, nullable=True)
-    
+
+class Media(Base):
+    __tablename__ = "media"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    file_id = Column(String, unique=True)
+
+
 Base.metadata.create_all(bind=engine)
 
 def get_session():
